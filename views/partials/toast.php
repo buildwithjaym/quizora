@@ -1,0 +1,4 @@
+<?php
+// views/partials/toast.php
+?>
+<div id="toast-root" class="toast-root" aria-live="polite" aria-atomic="true"></div>
