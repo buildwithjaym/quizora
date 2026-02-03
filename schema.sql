@@ -156,4 +156,78 @@ CREATE TABLE attempt_answers (
     ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
-COMMIT;
+-- QUIZ SETTINGS (add to your existing quizzes table)
+ALTER TABLE quizzes
+  ADD COLUMN instructions TEXT NULL AFTER subject,
+ 
+  ADD COLUMN due_at DATETIME NULL AFTER time_limit_minutes,
+  ADD COLUMN shuffle_questions TINYINT(1) NOT NULL DEFAULT 0 AFTER due_at,
+  ADD COLUMN allow_retake TINYINT(1) NOT NULL DEFAULT 0 AFTER shuffle_questions,
+  ADD COLUMN show_score_after_submission TINYINT(1) NOT NULL DEFAULT 1 AFTER allow_retake,
+  ADD COLUMN show_correct_answers_mode ENUM('never','immediate','after_due') NOT NULL DEFAULT 'never' AFTER show_score_after_submission,
+  ADD COLUMN require_login TINYINT(1) NOT NULL DEFAULT 1 AFTER show_correct_answers_mode,
+  ADD COLUMN access_via_link TINYINT(1) NOT NULL DEFAULT 0 AFTER require_login,
+  ADD COLUMN case_sensitive_default TINYINT(1) NOT NULL DEFAULT 0 AFTER access_via_link;
+
+-- QUESTIONS (one row per question)
+CREATE TABLE IF NOT EXISTS questions (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  quiz_id INT NOT NULL,
+  type ENUM('mcq','identification','matching','enumeration','truefalse','essay') NOT NULL,
+  prompt TEXT NOT NULL,
+  points INT NOT NULL DEFAULT 1,
+  position INT NOT NULL DEFAULT 1,
+  case_sensitive TINYINT(1) NOT NULL DEFAULT 0,
+  created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  updated_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  INDEX (quiz_id),
+  INDEX (type)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- MCQ choices
+CREATE TABLE IF NOT EXISTS question_choices (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  question_id INT NOT NULL,
+  choice_text TEXT NOT NULL,
+  is_correct TINYINT(1) NOT NULL DEFAULT 0,
+  position INT NOT NULL DEFAULT 1,
+  INDEX (question_id)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- Identification answer
+CREATE TABLE IF NOT EXISTS question_identification (
+  question_id INT PRIMARY KEY,
+  answer_text TEXT NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- True/False answer
+CREATE TABLE IF NOT EXISTS question_truefalse (
+  question_id INT PRIMARY KEY,
+  correct_value TINYINT(1) NOT NULL DEFAULT 1
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- Matching pairs
+CREATE TABLE IF NOT EXISTS matching_pairs (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  question_id INT NOT NULL,
+  left_text TEXT NOT NULL,
+  right_text TEXT NOT NULL,
+  position INT NOT NULL DEFAULT 1,
+  INDEX (question_id)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- Enumeration answers (each line is an accepted answer)
+CREATE TABLE IF NOT EXISTS enumeration_answers (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  question_id INT NOT NULL,
+  answer_text TEXT NOT NULL,
+  INDEX (question_id)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- Essay metadata (optional)
+CREATE TABLE IF NOT EXISTS question_essay (
+  question_id INT PRIMARY KEY,
+  rubric TEXT NULL,
+  max_words INT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
