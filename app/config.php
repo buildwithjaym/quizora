@@ -9,7 +9,7 @@ date_default_timezone_set('Asia/Manila');
 define('APP_NAME', 'QUIZORA');
 define('APP_ENV', 'local');
 
-define('BASE_URL', 'http://localhost/quizora/public');
+
 
 define('DB_HOST', '127.0.0.1');
 define('DB_NAME', 'quizora');
