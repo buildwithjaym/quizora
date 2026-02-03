@@ -73,7 +73,7 @@ $flashSuccess = flash_get('success');
     <div class="auth-card">
 
       <div class="auth-brand">
-        <img class="auth-logo" src="./../assets/img/logo.png" alt="Quizora Logo">
+        <img class="auth-logo" src="./../assets/img/remove_logo.png" alt="Quizora Logo">
         <div class="auth-brand-name">Quizora</div>
       </div>
 
