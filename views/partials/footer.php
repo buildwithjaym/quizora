@@ -9,6 +9,6 @@
     </div>
   </footer>
 
-  <script src="<?php echo e(BASE_URL); ?>/assets/js/app.js"></script>
+  <script src="./../assets/js/app.js"></script>
 </body>
 </html>
