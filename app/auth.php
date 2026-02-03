@@ -10,9 +10,7 @@ function teacher_is_logged_in()
 
 function teacher_id()
 {
-    if (!teacher_is_logged_in()) {
-        return null;
-    }
+    if (!teacher_is_logged_in()) return null;
     return (int)$_SESSION['teacher_id'];
 }
 
@@ -24,8 +22,18 @@ function require_teacher()
     }
 }
 
+function auth_require_guest()
+{
+    if (teacher_is_logged_in()) {
+        redirect('/teacher_dashboard.php');
+    }
+}
+
 function auth_login_teacher($id)
 {
+    if (session_status() === PHP_SESSION_ACTIVE) {
+        @session_regenerate_id(true);
+    }
     $_SESSION['teacher_id'] = (int)$id;
 }
 
@@ -38,12 +46,35 @@ function auth_logout_teacher()
         setcookie(session_name(), '', time() - 42000, $params['path'], $params['domain'], $params['secure'], $params['httponly']);
     }
 
-    session_destroy();
+    @session_destroy();
 }
 
-function auth_require_guest()
+function auth_find_teacher_by_email($email)
 {
-    if (teacher_is_logged_in()) {
-        redirect('/teacher_dashboard.php');
+    $email = trim((string)$email);
+    if ($email === '') return null;
+
+    $sql = "SELECT id, password_hash FROM users WHERE email = ? LIMIT 1";
+    $stmt = mysqli_prepare(db(), $sql);
+    if (!$stmt) return null;
+
+    mysqli_stmt_bind_param($stmt, "s", $email);
+    mysqli_stmt_execute($stmt);
+
+    $id = null;
+    $hash = null;
+
+    mysqli_stmt_bind_result($stmt, $id, $hash);
+    $rowOk = mysqli_stmt_fetch($stmt);
+
+    mysqli_stmt_close($stmt);
+
+    if ($rowOk) {
+        return [
+            'id' => (int)$id,
+            'password_hash' => (string)$hash
+        ];
     }
+
+    return null;
 }
