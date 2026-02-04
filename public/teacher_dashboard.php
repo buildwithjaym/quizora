@@ -276,7 +276,7 @@ $toastError   = flash_get('error');
 
     <nav class="dash-nav" aria-label="Primary">
       <a class="dash-nav__link is-active" href="./../public/teacher_dashboard.php">Dashboard</a>
-      <a class="dash-nav__link" href="./../public/quiz_create.php">Quizzes</a>
+      <a class="dash-nav__link" href="./../public/teacher_quizzes.php">Quizzes</a>
       <a class="dash-nav__link" href="./../public/teacher_results.php">Results</a>
       <a class="dash-nav__link" href="./../public/teacher_students.php">Students</a>
     </nav>
@@ -311,7 +311,7 @@ $toastError   = flash_get('error');
 
     <nav class="dash-drawer__nav" aria-label="Mobile">
       <a class="dash-drawer__link is-active" href="./../public/teacher_dashboard.php">Dashboard</a>
-      <a class="dash-drawer__link" href="./../public/quiz_create.php">Quizzes</a>
+      <a class="dash-drawer__link" href="./../public/teacher_quizzes.php">Quizzes</a>
       <a class="dash-drawer__link" href="./../public/teacher_results.php">Results</a>
       <a class="dash-drawer__link" href="./../public/teacher_students.php">Students</a>
     </nav>
